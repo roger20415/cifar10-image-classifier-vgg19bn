@@ -3,3 +3,4 @@ PyQt5==5.15.11
 torch==2.5.1
 torchvision==0.20.1
 torchsummary==1.5.1
+opencv-python==4.8.0
