@@ -120,9 +120,17 @@ class ButtonColumn(BaseColumn):
     def _handle_inference(self) -> None:
         predicted_label: str = self.vgg_inferencer.inference(self._inference_image_path)
         self._show_inference_result(predicted_label)
+        self._show_probalility_bar()
     
     def _show_inference_result(self, predicted_label: str) -> None:
         self.display_column.predict_label.setText(f"Predicted: {predicted_label}")
+    
+    def _show_probalility_bar(self) -> None:
+        prob_bar = image.imread(Config.PROBABILITY_BAR_PATH)
+        plt.imshow(prob_bar)
+        plt.axis('off')
+        plt.show()
+        
 
 class DisplayColumn(BaseColumn):
     def __init__(self, parent_widget) -> None:

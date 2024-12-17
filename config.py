@@ -22,3 +22,4 @@ class Config:
     
     LOSS_PLOT_PATH: str = ".\\plots\\loss_plot.png"
     ACC_PLOT_PATH: str = ".\\plots\\acc_plot.png"
+    PROBABILITY_BAR_PATH: str = ".\\plots\\probability_bar.png"

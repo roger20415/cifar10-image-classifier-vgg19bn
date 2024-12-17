@@ -1,6 +1,8 @@
 import torch
 from PIL import Image
 from torchvision import transforms
+import numpy as np
+import matplotlib.pyplot as plt
 
 from config import Config
 
@@ -28,9 +30,20 @@ class VggInferencer:
         model.eval()
         with torch.no_grad():
             predict = model(image)
-        probs = torch.nn.functional.softmax(predict[0], dim=0).detach().cpu().numpy()
+        probs: np.ndarray = torch.nn.functional.softmax(predict[0], dim=0).detach().cpu().numpy()
         _, predicted_idx = torch.max(predict, 1)
         predicted_label: str = Config.CLASSES[predicted_idx.item()]
         
+        self._save_probability_bar(probs)
+        
         return predicted_label
+    
+    def _save_probability_bar(self, probs: np.ndarray) -> None:
+        plt.bar(Config.CLASSES, probs)
+        plt.title('Probability of each class')
+        plt.xlabel('Classes')
+        plt.ylabel('Probability')
+        plt.savefig(Config.PROBABILITY_BAR_PATH)
+        plt.show()
+        
         
