@@ -14,7 +14,11 @@ class Config:
     WEIGHT_DECAY: float = 5e-4
     STEP_SIZE: int = 30
     GAMMA: float = 0.2
-    EPOCHS: int = 2
+    EPOCHS: int = 1
     
     TRAIN_SET_PATH: str = "./datasets/train_set"
     TEST_SET_PATH: str = "./datasets/test_set"
+    
+    
+    LOSS_PLOT_PATH: str = ".\\plots\\loss_plot.png"
+    ACC_PLOT_PATH: str = ".\\plots\\acc_plot.png"

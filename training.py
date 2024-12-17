@@ -12,10 +12,18 @@ from torch import optim
 from tqdm import tqdm
 
 from config import Config
+from training_monitor import TrainingMonitor
+from validation_monitor import ValidationMonitor
+from loss_plottor import LossPlottor
 
 class VggTrainer:
 
     def __init__(self):
+        
+        self.training_monitor = TrainingMonitor()
+        self.val_monitor = ValidationMonitor()
+        self.loss_plottor = LossPlottor(self.training_monitor, self.val_monitor)
+        
         if not os.path.exists(Config.MODEL_PATH):
             self._build_vgg_model()
         else:
@@ -62,8 +70,9 @@ class VggTrainer:
         
         pbar = tqdm(range(Config.EPOCHS), desc="Epoch")
         
+        self._best_val_acc: float = 0.0
         for epoch in pbar:
-            
+            self.training_monitor.epoch_reset()
             # Train
             model.train()
             for inputs, labels in tqdm(train_loader, unit="images", unit_scale=train_loader.batch_size, leave=False, desc="Train"):
@@ -73,20 +82,49 @@ class VggTrainer:
                 loss = criterion(outputs, labels)
                 loss.backward()
                 optimizer.step()
+                
+                self.training_monitor.add_running_loss(loss.item())
+                _, preds = torch.max(outputs, 1)
+                self.training_monitor.add_correct_train_num(torch.sum(preds == labels.data).item())
+                self.training_monitor.add_total_train_num(inputs.size(0))
+            
+            self.training_monitor.append_train_loss(len(train_loader))
+            self.training_monitor.append_train_acc()
             
             # Validate
             model.eval()
+            self.val_monitor.epoch_reset()
             with torch.no_grad():
                 for inputs, labels in tqdm(test_loader, unit="images", unit_scale=test_loader.batch_size, leave=False, desc="Test"):
                     inputs, labels = inputs.to(device), labels.to(device)
                     outputs = model(inputs)
                     loss = criterion(outputs, labels)
+                    self.val_monitor.add_running_val_loss(loss.item())
+                    _, preds = torch.max(outputs, 1)
+                    self.val_monitor.add_correct_val_num(torch.sum(preds == labels.data).item())
+                    self.val_monitor.add_total_val_num(inputs.size(0))
             lr_scheduler.step()
+            self.val_monitor.append_val_loss(len(test_loader))
+            self.val_monitor.append_val_acc()
         
+            self._save_model(model)
+            
+        self.loss_plottor.plot_loss()
 
     def _build_vgg_model(self) -> None:
         model: VGG = torchvision.models.vgg19_bn(num_classes=len(Config.CLASSES))
         torch.save(model, Config.MODEL_PATH)
+
+    def _save_model(self, model: VGG) -> None:
+        last_val_acc: float = self.val_monitor.get_last_val_acc()
+        if last_val_acc > self._best_val_acc:
+            model_dir = os.path.dirname(Config.MODEL_PATH)
+
+            model_filename = f"vgg19_val_acc_{last_val_acc:.2f}.pth"
+            model_path = os.path.join(model_dir, model_filename)
+
+            torch.save(model, model_path)
+            self._best_val_acc = last_val_acc
         
 if __name__ == '__main__':
     trainer = VggTrainer()
