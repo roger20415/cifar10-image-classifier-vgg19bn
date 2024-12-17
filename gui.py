@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (QWidget, QGroupBox, QVBoxLayout, QHBoxLayout,
 from PyQt5.QtCore import Qt
 
 from augmented_images import ImageAugmentationShower
+from training import VggTrainer
 from config import Config
 
 
@@ -38,6 +39,8 @@ class BaseColumn(ABC):
 class ButtonColumn(BaseColumn):
     def __init__(self, parent_widget) -> None:
         self._parent_widget = parent_widget
+        self.vgg_trainer = VggTrainer()
+        
 
     def create_column(self) -> QGroupBox:
         group = QGroupBox()
@@ -51,6 +54,7 @@ class ButtonColumn(BaseColumn):
         layout.addWidget(show_augmentation_images_button)
 
         show_model_structure_button = QPushButton("Show Model Structure")
+        show_model_structure_button.clicked.connect(lambda: self._handle_show_model_structure())
         layout.addWidget(show_model_structure_button)
 
         show_accuracy_loss_button = QPushButton("Show Accuracy and Loss")
@@ -68,9 +72,12 @@ class ButtonColumn(BaseColumn):
         return group
     
     def _handle_show_augmentation_images(self) -> None:
-        print("123")
         images, image_names = ImageAugmentationShower.augment_images(Config.AUGMENTATION_IMAGE_FOLDER_PATH)
         ImageAugmentationShower.show_images(images, image_names)
+    
+    def _handle_show_model_structure(self) -> None:
+        self.vgg_trainer.build_vgg_model()
+        self.vgg_trainer.show_vgg_structure()
 
 class DisplayColumn(BaseColumn):
     def __init__(self, parent_widget) -> None:
