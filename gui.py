@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 
 from PyQt5.QtWidgets import (QWidget, QGroupBox, QVBoxLayout, QHBoxLayout, 
-                             QPushButton, QLabel, QSizePolicy)
+                             QPushButton, QLabel, QSizePolicy, QFileDialog)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 import matplotlib.pyplot as plt
 from matplotlib import image
 
@@ -20,8 +21,8 @@ class Gui(QWidget):
 
         main_layout = QHBoxLayout()
 
-        button_column = ButtonColumn(self)
         display_column = DisplayColumn(self)
+        button_column = ButtonColumn(self, display_column)
 
         main_layout.addWidget(button_column.create_column(), 1)
         main_layout.addWidget(display_column.create_column(), 2)
@@ -39,16 +40,18 @@ class BaseColumn(ABC):
 
 
 class ButtonColumn(BaseColumn):
-    def __init__(self, parent_widget) -> None:
+    def __init__(self, parent_widget, display_column) -> None:
         self._parent_widget = parent_widget
+        self.display_column = display_column
         self.vgg_trainer = VggTrainer()
+        self._inference_image_path: str = None
         
-
     def create_column(self) -> QGroupBox:
         group = QGroupBox()
         layout = QVBoxLayout()
 
         load_image_button = QPushButton("Load Image")
+        load_image_button.clicked.connect(lambda: self._handle_load_image())
         layout.addWidget(load_image_button)
 
         show_augmentation_images_button = QPushButton("Show Augmentation Images")
@@ -95,6 +98,21 @@ class ButtonColumn(BaseColumn):
         axes[1].set_title('Loss')
 
         plt.show()
+        
+    def _handle_load_image(self) -> None:
+        options = QFileDialog.Options()
+        file, _ = QFileDialog.getOpenFileName(self._parent_widget, "Open Image", "", "PNG Files (*.png);;All Files (*)", options=options)
+        
+        if file:
+            self._inference_image_path = file
+            print(f"Selected Image Path: {self._inference_image_path}")
+            self._show_inference_image(self._inference_image_path)
+    
+    def _show_inference_image(self, image_path: str) -> None:
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(128, 128, Qt.KeepAspectRatio)
+        self.display_column.image_label.setPixmap(pixmap)
+        self.display_column.image_label.setAlignment(Qt.AlignLeft)
 
 class DisplayColumn(BaseColumn):
     def __init__(self, parent_widget) -> None:
