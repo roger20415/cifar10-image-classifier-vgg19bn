@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from PyQt5.QtWidgets import (QWidget, QGroupBox, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QLabel, QSizePolicy)
 from PyQt5.QtCore import Qt
+import matplotlib.pyplot as plt
+from matplotlib import image
 
 from augmented_images import ImageAugmentationShower
 from training import VggTrainer
@@ -58,6 +60,7 @@ class ButtonColumn(BaseColumn):
         layout.addWidget(show_model_structure_button)
 
         show_accuracy_loss_button = QPushButton("Show Accuracy and Loss")
+        show_accuracy_loss_button.clicked.connect(lambda: self._handle_show_accuracy_loss())
         layout.addWidget(show_accuracy_loss_button)
 
         inference_button = QPushButton("Inference")
@@ -77,6 +80,21 @@ class ButtonColumn(BaseColumn):
     
     def _handle_show_model_structure(self) -> None:
         self.vgg_trainer.show_vgg_structure()
+    
+    def _handle_show_accuracy_loss(self) -> None:
+        acc_img = image.imread(Config.ACC_PLOT_PATH)
+        val_img = image.imread(Config.LOSS_PLOT_PATH)
+
+        _, axes = plt.subplots(2, 1, figsize=(6, 9))
+        axes[0].imshow(acc_img)
+        axes[0].axis('off')
+        axes[0].set_title('Accuracy')
+
+        axes[1].imshow(val_img)
+        axes[1].axis('off')
+        axes[1].set_title('Loss')
+
+        plt.show()
 
 class DisplayColumn(BaseColumn):
     def __init__(self, parent_widget) -> None:
