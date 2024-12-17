@@ -76,7 +76,6 @@ class ButtonColumn(BaseColumn):
         ImageAugmentationShower.show_images(images, image_names)
     
     def _handle_show_model_structure(self) -> None:
-        self.vgg_trainer.build_vgg_model()
         self.vgg_trainer.show_vgg_structure()
 
 class DisplayColumn(BaseColumn):
