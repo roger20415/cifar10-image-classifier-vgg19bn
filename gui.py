@@ -9,6 +9,7 @@ from matplotlib import image
 
 from augmented_images import ImageAugmentationShower
 from training import VggTrainer
+from inference import VggInferencer
 from config import Config
 
 
@@ -44,6 +45,7 @@ class ButtonColumn(BaseColumn):
         self._parent_widget = parent_widget
         self.display_column = display_column
         self.vgg_trainer = VggTrainer()
+        self.vgg_inferencer = VggInferencer()
         self._inference_image_path: str = None
         
     def create_column(self) -> QGroupBox:
@@ -67,6 +69,7 @@ class ButtonColumn(BaseColumn):
         layout.addWidget(show_accuracy_loss_button)
 
         inference_button = QPushButton("Inference")
+        inference_button.clicked.connect(lambda: self._handle_inference())
         layout.addWidget(inference_button)
 
         layout.addStretch()
@@ -113,6 +116,13 @@ class ButtonColumn(BaseColumn):
         pixmap = pixmap.scaled(128, 128, Qt.KeepAspectRatio)
         self.display_column.image_label.setPixmap(pixmap)
         self.display_column.image_label.setAlignment(Qt.AlignLeft)
+    
+    def _handle_inference(self) -> None:
+        predicted_label: str = self.vgg_inferencer.inference(self._inference_image_path)
+        self._show_inference_result(predicted_label)
+    
+    def _show_inference_result(self, predicted_label: str) -> None:
+        self.display_column.predict_label.setText(f"Predicted: {predicted_label}")
 
 class DisplayColumn(BaseColumn):
     def __init__(self, parent_widget) -> None:
@@ -131,10 +141,10 @@ class DisplayColumn(BaseColumn):
         layout.addWidget(self.image_label)
 
         # predict accuracy show space
-        predict_label = QLabel("Predicted:")
-        predict_label.setAlignment(Qt.AlignLeft)
+        self.predict_label = QLabel("Predicted:")
+        self.predict_label.setAlignment(Qt.AlignLeft)
 
-        layout.addWidget(predict_label)
+        layout.addWidget(self.predict_label)
         layout.addStretch()
 
         group.setLayout(layout)
