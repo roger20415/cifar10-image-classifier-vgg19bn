@@ -20,13 +20,15 @@ class ImageAugmentationShower:
 
         for image_name in image_names:
             image_path: str = os.path.join(origin_image_folder_path, image_name)
-        try:
-            image = Image.open(image_path)
-        except Exception as e:
-            print(f"Error opening image {image_path}: {e}")
-            
-            image = transform(image)
-            images.append(image)
+            print("image_path: " + image_path)
+            try:
+                image = Image.open(image_path)
+                image = transform(image)
+                images.append(image)
+                print(str(type(image)))
+            except Exception as e:
+                print(f"Error opening image {image_path}: {e}")
+
 
         return images, image_names
 
@@ -39,4 +41,3 @@ class ImageAugmentationShower:
             plt.imshow(image)
             plt.title(image_names[i].split(".")[0])
         plt.show()
-        plt.close()

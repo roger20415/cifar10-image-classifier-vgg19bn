@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
+
 from PyQt5.QtWidgets import (QWidget, QGroupBox, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QLabel, QSizePolicy)
 from PyQt5.QtCore import Qt
-
 
 from augmented_images import ImageAugmentationShower
 from config import Config
@@ -47,7 +47,7 @@ class ButtonColumn(BaseColumn):
         layout.addWidget(load_image_button)
 
         show_augmentation_images_button = QPushButton("Show Augmentation Images")
-        show_augmentation_images_button.clicked.connect(self._handle_show_augmentation_images)
+        show_augmentation_images_button.clicked.connect(lambda: self._handle_show_augmentation_images())
         layout.addWidget(show_augmentation_images_button)
 
         show_model_structure_button = QPushButton("Show Model Structure")
