@@ -4,7 +4,7 @@ from training_monitor import TrainingMonitor
 from validation_monitor import ValidationMonitor
 from config import Config
 
-class LossPlottor:
+class LossPlotter:
     def __init__(self, training_monitor: TrainingMonitor, val_monitor: ValidationMonitor) -> None:
         self.training_monitor = training_monitor
         self.val_monitor = val_monitor

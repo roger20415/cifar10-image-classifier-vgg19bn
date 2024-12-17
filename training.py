@@ -14,7 +14,8 @@ from tqdm import tqdm
 from config import Config
 from training_monitor import TrainingMonitor
 from validation_monitor import ValidationMonitor
-from loss_plottor import LossPlottor
+from loss_plotter import LossPlotter
+from acc_plotter import AccPlotter
 
 class VggTrainer:
 
@@ -22,7 +23,8 @@ class VggTrainer:
         
         self.training_monitor = TrainingMonitor()
         self.val_monitor = ValidationMonitor()
-        self.loss_plottor = LossPlottor(self.training_monitor, self.val_monitor)
+        self.loss_plotter = LossPlotter(self.training_monitor, self.val_monitor)
+        self.acc_plotter = AccPlotter(self.training_monitor, self.val_monitor)
         
         if not os.path.exists(Config.MODEL_PATH):
             self._build_vgg_model()
@@ -109,7 +111,8 @@ class VggTrainer:
         
             self._save_model(model)
             
-        self.loss_plottor.plot_loss()
+        self.loss_plotter.plot_loss()
+        self.acc_plotter.plot_acc()
 
     def _build_vgg_model(self) -> None:
         model: VGG = torchvision.models.vgg19_bn(num_classes=len(Config.CLASSES))
