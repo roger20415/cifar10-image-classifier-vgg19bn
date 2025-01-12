@@ -1,5 +1,5 @@
 class Config:
-    AUGMENTATION_IMAGE_FOLDER_PATH: str = ".\\datasets\\aumentation_dataset"
+    AUGMENTATION_IMAGE_FOLDER_PATH: str = ".\\datasets\\augmentation_dataset"
     
     CLASSES: tuple[str] = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
     
@@ -17,8 +17,6 @@ class Config:
     EPOCHS: int = 1
     
     TRAIN_SET_PATH: str = "./datasets/train_set"
-    TEST_SET_PATH: str = "./datasets/test_set"
-    
     
     LOSS_PLOT_PATH: str = ".\\plots\\loss_plot.png"
     ACC_PLOT_PATH: str = ".\\plots\\acc_plot.png"

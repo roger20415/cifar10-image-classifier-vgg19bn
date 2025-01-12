@@ -49,12 +49,12 @@ class VggTrainer:
             transforms.Normalize((0.5070751592371323, 0.48654887331495095, 0.4409178433670343),
                                 (0.2673342858792401, 0.2564384629170883, 0.27615047132568404))])
 
-        train_set = torchvision.datasets.CIFAR10(root=Config.TEST_SET_PATH, train=True,
+        train_set = torchvision.datasets.CIFAR10(root=Config.TRAIN_SET_PATH, train=True,
                                                 download=True, transform=transform)
         train_loader = torch.utils.data.DataLoader(train_set, batch_size=Config.BATCH_SIZE,
                                                 shuffle=True, num_workers=2, pin_memory=True)
 
-        test_set = torchvision.datasets.CIFAR10(root=Config.TEST_SET_PATH, train=False,
+        test_set = torchvision.datasets.CIFAR10(root=Config.TRAIN_SET_PATH, train=False,
                                             download=True, transform=transform)
         test_loader = torch.utils.data.DataLoader(test_set, batch_size=Config.BATCH_SIZE,
                                                 shuffle=False, num_workers=2, pin_memory=True)

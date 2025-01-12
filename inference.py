@@ -44,6 +44,5 @@ class VggInferencer:
         plt.xlabel('Classes')
         plt.ylabel('Probability')
         plt.savefig(Config.PROBABILITY_BAR_PATH)
-        plt.show()
         
         

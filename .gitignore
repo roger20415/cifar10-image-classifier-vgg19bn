@@ -165,4 +165,7 @@ cython_debug/
 *.pth
 *.p[nN][gG]
 
-datasets/test_set
+datasets/train_set
+
+!datasets/inference_dataset/*
+!datasets/augmentation_dataset/*
