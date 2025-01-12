@@ -7,7 +7,8 @@ This project trains a VGG19 model with batch normalization (BN) using PyTorch fo
 
 
 1. **Load Image**  
-   - Load an image for classification inference.  
+   - Load an image for classification inference.
+   - You can choose images from `./datasets/Inference_dataset` folder. 
    ![image-4](https://github.com/user-attachments/assets/a6503d32-efa9-48dd-9be9-42bace3ee224)
 
 2. **Show Augmentation Images**  
