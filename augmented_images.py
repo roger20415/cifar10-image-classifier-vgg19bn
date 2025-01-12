@@ -40,4 +40,5 @@ class ImageAugmentationShower:
             plt.subplot(4, 3, i + 1)
             plt.imshow(image)
             plt.title(image_names[i].split(".")[0])
+        plt.tight_layout()
         plt.show()
